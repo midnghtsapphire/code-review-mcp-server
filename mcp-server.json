@@ -1,0 +1,241 @@
+{
+  "name": "code-review",
+  "version": "1.0.0",
+  "description": "Automated code review MCP server for React/TypeScript projects with quality gates and deployment validation",
+  "author": "Mechatronopolis",
+  "tools": [
+    {
+      "name": "scan_nested_anchors",
+      "description": "Scans React components for nested <a> tags that cause console errors",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectPath": {
+            "type": "string",
+            "description": "Absolute path to the project root directory"
+          },
+          "filePatterns": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "File patterns to scan (e.g., ['**/*.tsx', '**/*.jsx'])",
+            "default": ["**/*.tsx", "**/*.jsx"]
+          }
+        },
+        "required": ["projectPath"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "file": { "type": "string" },
+                "line": { "type": "number" },
+                "column": { "type": "number" },
+                "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+                "message": { "type": "string" },
+                "suggestion": { "type": "string" }
+              }
+            }
+          },
+          "summary": {
+            "type": "object",
+            "properties": {
+              "totalFiles": { "type": "number" },
+              "filesWithIssues": { "type": "number" },
+              "totalIssues": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "check_react_best_practices",
+      "description": "Validates React components against best practices (hooks rules, prop types, key props, etc.)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectPath": { "type": "string" },
+          "checks": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Specific checks to run",
+            "default": ["hooks", "keys", "props", "state", "effects"]
+          }
+        },
+        "required": ["projectPath"]
+      }
+    },
+    {
+      "name": "validate_typescript",
+      "description": "Runs TypeScript compiler checks and reports type errors",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectPath": { "type": "string" },
+          "strict": {
+            "type": "boolean",
+            "description": "Enable strict mode checks",
+            "default": false
+          }
+        },
+        "required": ["projectPath"]
+      }
+    },
+    {
+      "name": "scan_accessibility",
+      "description": "Scans for WCAG 2.1 accessibility issues (missing alt text, aria labels, keyboard navigation)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectPath": { "type": "string" },
+          "level": {
+            "type": "string",
+            "enum": ["A", "AA", "AAA"],
+            "description": "WCAG compliance level",
+            "default": "AA"
+          }
+        },
+        "required": ["projectPath"]
+      }
+    },
+    {
+      "name": "detect_security_issues",
+      "description": "Scans for common security vulnerabilities (XSS, SQL injection, exposed secrets)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectPath": { "type": "string" },
+          "checkDependencies": {
+            "type": "boolean",
+            "description": "Check npm dependencies for known vulnerabilities",
+            "default": true
+          }
+        },
+        "required": ["projectPath"]
+      }
+    },
+    {
+      "name": "analyze_performance",
+      "description": "Identifies performance issues (large bundles, unnecessary re-renders, memory leaks)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectPath": { "type": "string" },
+          "bundleAnalysis": {
+            "type": "boolean",
+            "description": "Analyze bundle size and dependencies",
+            "default": true
+          }
+        },
+        "required": ["projectPath"]
+      }
+    },
+    {
+      "name": "generate_quality_report",
+      "description": "Generates comprehensive code quality report with all findings",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectPath": { "type": "string" },
+          "outputFormat": {
+            "type": "string",
+            "enum": ["markdown", "html", "json"],
+            "default": "markdown"
+          },
+          "includeFixSuggestions": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": ["projectPath"]
+      }
+    },
+    {
+      "name": "validate_deployment_readiness",
+      "description": "Checks if code is ready for deployment (all tests pass, no critical issues, build succeeds)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectPath": { "type": "string" },
+          "environment": {
+            "type": "string",
+            "enum": ["dev", "test", "live"],
+            "description": "Target deployment environment"
+          },
+          "strictMode": {
+            "type": "boolean",
+            "description": "Fail on any warnings (not just errors)",
+            "default": false
+          }
+        },
+        "required": ["projectPath", "environment"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "ready": { "type": "boolean" },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": { "type": "string" },
+                "severity": { "type": "string" },
+                "message": { "type": "string" }
+              }
+            }
+          },
+          "warnings": { "type": "array", "items": { "type": "string" } },
+          "summary": {
+            "type": "object",
+            "properties": {
+              "testsPass": { "type": "boolean" },
+              "buildSucceeds": { "type": "boolean" },
+              "noCriticalIssues": { "type": "boolean" },
+              "noSecurityVulnerabilities": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "integrate_coderabbit",
+      "description": "Triggers CodeRabbit review on GitHub pull request",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "repoOwner": { "type": "string" },
+          "repoName": { "type": "string" },
+          "prNumber": { "type": "number" },
+          "waitForReview": {
+            "type": "boolean",
+            "description": "Wait for CodeRabbit to complete review",
+            "default": false
+          }
+        },
+        "required": ["repoOwner", "repoName", "prNumber"]
+      }
+    },
+    {
+      "name": "send_slack_report",
+      "description": "Sends code quality report to Slack channel",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "webhookUrl": { "type": "string" },
+          "reportData": { "type": "object" },
+          "channel": { "type": "string", "default": "#code-review" },
+          "mentionOnCritical": {
+            "type": "boolean",
+            "description": "Mention @channel if critical issues found",
+            "default": true
+          }
+        },
+        "required": ["webhookUrl", "reportData"]
+      }
+    }
+  ]
+}
