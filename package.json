@@ -12,7 +12,8 @@
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "test": "vitest",
-    "lint": "eslint src --ext .ts"
+    "lint": "eslint src --ext .ts",
+    "check:badges": "node scripts/check-npm-badges.mjs"
   },
   "keywords": [
     "mcp",
@@ -48,5 +49,6 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "private": true
 }

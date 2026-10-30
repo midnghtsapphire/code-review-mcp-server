@@ -1,12 +1,6 @@
 # Code Review MCP Server
 
 
-<!-- AUTO-PACKAGE-BADGES:START -->
-<!-- Auto-generated package badges -->
-
-![npm version](https://img.shields.io/npm/v/%40mechatronopolis%2Fcode-review-mcp?style=flat-square&logo=npm&color=blue) ![npm downloads](https://img.shields.io/npm/dw/%40mechatronopolis%2Fcode-review-mcp?style=flat-square&color=brightgreen) ![npm license](https://img.shields.io/npm/l/%40mechatronopolis%2Fcode-review-mcp?style=flat-square) [![Deployed](https://img.shields.io/badge/deployed-1.0.0-blue?style=flat-square)](https://www.npmjs.com/package/@mechatronopolis/code-review-mcp)
-
-<!-- AUTO-PACKAGE-BADGES:END -->
 **Reusable code review automation for all your Manus projects**
 
 A Model Context Protocol (MCP) server that provides automated code review using 100% free, open-source tools. Scan for nested anchor tags, React best practices, TypeScript errors, accessibility issues, security vulnerabilities, and more.
